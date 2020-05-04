@@ -24,6 +24,15 @@ case $operation in
 		done
 		percentHeads=`echo "scale=4 ; ${singletResult[heads]}*100/$numberOfFlips" | bc`
 		percentTails=`echo "scale=4 ; ${singletResult[tails]}*100/$numberOfFlips" | bc`
+		winningcount=0
+		for key in ${!singletResult[@]}
+		do
+			if [ $winningcount -lt ${singletResult[${key}]} ]
+			then
+				winningCombination=$key
+			fi
+		done
+		echo "Winning combination is $winningCombination"
 	;;
 	2)
 		read -p "Enter the number of times to flip coin :" numberOfFlips
@@ -48,10 +57,22 @@ case $operation in
 				((doubletResult[TT]++))
 			fi
 		done
+		#Calculation of percentage wins of each doublet combination and storing them accordingly
 		for key in ${!doubletResult[@]}
 		do
 			doubletWinPercentage[$key]=`echo "scale=4; ${doubletResult[${key}]}*100/$numberOfFlips" | bc`
 		done
+		#finding the maximum win percent combination and displaying it with the win percentage
+		winningPercent=0
+		for key in ${!doubletWinPercentage[@]}
+		do
+			if (( $(echo "$winningPercent < ${doubletWinPercentage[${key}]}" | bc -l) ))
+			then
+				winningPercent=${doubletWinPercentage[${key}]}
+				winningCombination=$key
+			fi
+		done
+		echo "Winning combination is $winningCombination with win percentage of $winningPercent"
 	;;
 	3)
 		read -p "Enter the number of times to flip coin :" numberOfFlips
@@ -95,10 +116,23 @@ case $operation in
 
 			esac
 		done
+		#Calculation of percentage wins of each triplet combination and storing them accordingly
 		for key in ${!tripletResult[@]}
 		do
 			tripletWinPercentage[$key]=`echo "scale=4 ; ${tripletResult[${key}]}*100/$numberOfFlips" | bc`
 		done
+		#finding the maximum win percent combination and displaying it with the win percentage
+		winningPercent=0
+		for key in ${!tripletWinPercentage[@]}
+		do
+			if (( $(echo "$winningPercent < ${tripletWinPercentage[${key}]}" | bc -l) ))
+			then
+				winningPercent=${tripletWinPercentage[${key}]}
+				winningCombination=$key
+			fi
+		done
+		echo "Winning combination is $winningCombination with win percentage of $winningPercent"
+
 	;;
 	*)
 		echo "INVALID INPUT"
